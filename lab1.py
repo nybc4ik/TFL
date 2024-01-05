@@ -109,41 +109,50 @@ def rewriting(terms):
     
 
     # необходимо из term1 и term2 сделать линейную функцию !
-    for term in [term1, term2]:
-        term_left = 0
-        term_right = 0
-        counter = 0
-        term_left_arr = []
-
-
-        while counter == 0:
-            for i in term:
-                if i == "(":
-                    term_left += 1
-                    term_left_arr.append(counter)
-                if i == ")":
-                    term_right += 1
-                    if term_left == 1 and term_right == 1:
-                        l = term[0]
-                        print("коэфиценты ", coefficients[l])
-                        start_new = term.index('(')+1
-                        finish_new = term.index(')')
-                        new = term[start_new:finish_new].split(',')
-                        term_new = ''
-                        for j in range(len(new)):
-                            for k in (new[j].split("+")):
-                                term_new += coefficients[l][j] + "*" + k + "+"
-                        term_new += coefficients[l][len(coefficients[l])-1]
-                        print("что-то новое ", term_new)
-                        counter += 1
-                    """
-                    else:
-                        left_arr = term_left_arr.pop()
-                        new = 
-                        counter = 0
-                     """   
-            counter += 1
+    print("before")
+    print(term1, "\n", term2)
+    term1 = line(term1)
+    term2 = line(term2)
+    print("after")
+    print(term1, "\n", term2)
     
+def line(term):
+    term_left = 0
+    term_right = 0
+    counter = 0
+    term_left_arr = []
+
+    while counter == 0:
+        for i in term:
+            if i == "(":
+                term_left += 1
+                term_left_arr.append(counter)
+            if i == ")":
+                term_right += 1
+                if term_left == 1 and term_right == 1:
+                    l = term[0]
+                    #print("коэфиценты ", coefficients[l])
+                    start_new = term.index('(')+1
+                    finish_new = term.index(')')
+                    new = term[start_new:finish_new].split(',')
+                    term_new = ''
+                    for j in range(len(new)):
+                        for k in (new[j].split("+")):
+                            term_new += coefficients[l][j] + "*" + k + "+"
+                    term_new += coefficients[l][len(coefficients[l])-1]
+                    #print("что-то новое ", term_new)
+                    return term_new
+                else:
+                    left_arr = term_left_arr.pop()
+                    new1 = line(term[left_arr-1:counter+1])
+                    new2 = term[left_arr-1:counter+1]
+                    term = term.replace(new2, new1)
+                    counter = 0 
+                    break
+
+            counter += 1
+
+    return term
 
 #Ввод данных
 
