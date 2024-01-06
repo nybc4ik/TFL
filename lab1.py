@@ -3,10 +3,9 @@ import sys
 
 
 def rewriting(terms):
-    global counter_new
+    global counter_new, Result_F, file
     term1 = terms[:terms.find("=")]
     term2 = terms[terms.find("=")+1:]
-    #print(term1, term2)
 
     # проверка скобок (количество открытых должно совпадать с количеством закрытых)
     counter = 0 
@@ -21,7 +20,6 @@ def rewriting(terms):
             else:
                 if str1 == ")":
                     counter -= 1
-    #print(constr, "\n", counter) 
     if counter != 0:
         print("не хватает скобки!") 
         sys.exit()
@@ -39,7 +37,6 @@ def rewriting(terms):
             else:
                 if str1 == ")":
                     counter -= 1
-    #print(constr, "\n", counter)  
     if counter != 0:
         print("не хватает скобки!") 
         sys.exit()
@@ -71,7 +68,7 @@ def rewriting(terms):
                     break
         #print("проверка подсчёта ",counter)    
                 
-        all_counter = []
+        
         all_counter.append(counter)
         arr = []
         for k in range(counter):
@@ -88,34 +85,107 @@ def rewriting(terms):
         else:
             str0 = ""
         str2 += "Or( " + str0 + str3 + "), "
-        #print ("Вот так вот: ",str2)
+
         coefficients[i] = arr
-    str2 = str2[:-2] +")"
+    str2 = str2[:-2] + ")"
 
-    #print('coefficients ', coefficients)
-    #print('test ', arr)
 
-    str4 = "And( "
+    str4 = "And("
+    for i in coefficients:
+        for k in coefficients[i]:
+            globals()[k] = Int(k)
+    
     for i in coefficients:
         for k in coefficients[i]:
             if i != "free":
                 str4 += k + ">=1, "
             else:
                 str4 += k + ">=0, "
-    print(str4[:-2]+")")
-    print(str2)
-#    a.add(eval(str2))
-#    a.add(eval(str4[:-2]+")"))
+    #print(str4[:-2]+")")
+    #print(str2)
+    Result_F.add(eval(str2))
+    Result_F.add(eval(str4[:-2]+")"))
     
 
     # необходимо из term1 и term2 сделать линейную функцию !
-    print("before")
-    print(term1, "\n", term2)
+
     term1 = line(term1)
     term2 = line(term2)
-    print("after")
-    print(term1, "\n", term2)
+
+    #подсчёт множителей каждой переменной a*x -> 1 множитель  a0*a1*y -> два множителя
+    c = 0
+    Mn_term1 = {}
+    Mn_term2 = {}
+    for term in (term1, term2):
+        #print("term ", term)
+        factors = {}
+        result = ''
+        for j in variables: #берём переменную из списка который ввели в начале
+            #print("variabl ", j)
+            coef = ""
+            check = True
+            counter1 = 0
+            counter2 = 0
+            for k in term:
+                if k == j: #ищем её в полученной функции
+                    #print(counter1, counter2, k)
+                    coef += term[counter2:counter1-1] + "+"
+                    term = term[:counter2]+term[counter1+2:]
+                    counter1 = counter2
+                    counter2 = 0 
+                    check = True
+                    continue
+                if k == "+" and counter1 !=0:
+                    for m in term[counter2:counter1]:
+                        if m in variables:
+                            counter2 = counter1 + 1
+                            check = False
+                            break
+                    if check :
+                        result += term[counter2:counter1] + "+"
+                        #print(term, counter1, counter2)
+                        term = term[:counter2] + term[counter1+1:]
+                        counter1 = counter2
+                        counter2 = 0
+                        #print(counter1)
+                        continue
+                if i == "+" and counter1 == 0 :
+                    continue
+                counter1 += 1    
+
+            if len(coef) > 0:
+                if  coef[-1] == "+":
+                    coef = coef[:-1]
+                    factors[j] = coef
+                    #print(j, coef)
+
+        result += term
+        factors["free"] = result
+        if c == 0:
+            Mn_term1 = factors
+            c += 1
+        else:
+            Mn_term2 = factors
     
+    #print("Mn_term1 ", Mn_term1)
+    #print("Mn_term2 ", Mn_term2)
+    
+    if not "free" in variables:
+        variables.append("free")
+
+    str5 = 'Or('
+    for j in variables:
+        if not j in Mn_term1:
+            Mn_term1[j] = "0"
+        if not j in Mn_term2:
+            Mn_term2[j] = "0"    
+        str5 += "(" + Mn_term1[j] + ">" + Mn_term2[j] + "), "
+        Result_F.add(eval(Mn_term1[j] + ">=" + Mn_term2[j]))
+    str5 = str5[:-2] + ")"
+    Result_F.add(eval(str5))
+    #print(str5)
+
+
 def line(term):
     term_left = 0
     term_right = 0
@@ -137,8 +207,8 @@ def line(term):
                     new = term[start_new:finish_new].split(',')
                     term_new = ''
                     for j in range(len(new)):
-                        for k in (new[j].split("+")):
-                            term_new += coefficients[l][j] + "*" + k + "+"
+                        for Result_F in (new[j].split("+")):
+                            term_new += coefficients[l][j] + "*" + Result_F + "+"
                     term_new += coefficients[l][len(coefficients[l])-1]
                     #print("что-то новое ", term_new)
                     return term_new
@@ -153,6 +223,8 @@ def line(term):
             counter += 1
 
     return term
+
+
 
 #Ввод данных
 
@@ -178,16 +250,18 @@ terms = []
 constr = []
 coefficients = {}
 
-a = Solver()
+Result_F = Solver()
 
 expression = input()
 while expression != '0':
     expression = ''.join(expression.split())
-    #print(expression)
     terms.append(expression)
     expression = input()
 
 for i in range(len(terms)):
     rewriting(terms[i])
-    #print(terms[i])
-    #print(i)
+
+
+print(Result_F.check())
+if Result_F.check() == z3.sat:
+    print(Result_F.model())
