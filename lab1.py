@@ -7,7 +7,7 @@ def rewriting(terms):
     term1 = terms[:terms.find("=")]
     term2 = terms[terms.find("=")+1:]
 
-    # проверка скобок (количество открытых должно совпадать с количеством закрытых)
+    #проверка скобок (количество открытых должно совпадать с количеством закрытых)
     counter = 0 
     for i in range(len(term1)):
         str1 = term1[i]
@@ -43,7 +43,7 @@ def rewriting(terms):
     #else:
         #print("всё ок :-)")
 
-    # подсчёт коэффициентов
+    #подсчёт коэффициентов
     
     str2 = "And( "
     for i in constr:
@@ -107,7 +107,7 @@ def rewriting(terms):
     Result_F.add(eval(str4[:-2]+")"))
     
 
-    # необходимо из term1 и term2 сделать линейную функцию !
+    #необходимо из term1 и term2 сделать линейную функцию !
 
     term1 = line(term1)
     term2 = line(term2)
