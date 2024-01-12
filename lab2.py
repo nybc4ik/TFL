@@ -20,10 +20,13 @@ def random_regex(max_len_regex):
             letter3 = random.choice(alphabet)
             if random.choice([0, 1]) == 1: 
                 letter3 += "*"
-            if random.choice([0, 1]) == 1: # выбор бинарной операции | или e
-                index = regex.rindex("(")
-                regex = regex[:index+1] + "(" + regex[index+1:]
-                regex += ("|" + letter3 + ")")
+            if "(" in regex:
+                if random.choice([0, 1]) == 1: # выбор бинарной операции | или e
+                    index = regex.rindex("(")
+                    regex = regex[:index+1] + "(" + regex[index+1:]
+                    regex += ("|" + letter3 + ")")
+                else:
+                    regex += letter3
             else:
                 regex += letter3
             max_len_regex -= 1
