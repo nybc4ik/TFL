@@ -246,4 +246,4 @@ def optimise(string):
 #(a*|b*|c*)*dada*a*a*((bb))a(c**)**(a|ca)*a((ba)*(ba)*)*
 s=str(input())
 
-print(optimise(s))
+#print(optimise(s))

@@ -74,6 +74,6 @@ def create_regex():
     else:
         regex = random_regex(max_len_regex-1)
         #print(random_regex(max_len_regex-1))
-    print(regex)
+    #print(regex)
     return regex
 s = create_regex()

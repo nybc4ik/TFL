@@ -436,8 +436,9 @@ def match(pattern, word):
 
 
 regular1 = regex #оригинальная регулярка
+print("оригинальная регулярка: ",regular1)
 regular2 =  optimizer1.optimise(regular1) #оптимизированная регулярка
-
+print("оптимизированная регулярка: ",regular2)
 
 
 #оригинальная регулярка
