@@ -9,4 +9,5 @@
 
 Пример работы программы:
 
-![image](https://github.com/nybc4ik/TFL/assets/63342992/93dc6e35-9ff6-466e-9a40-741e325733ee)
+![image](https://github.com/nybc4ik/TFL/assets/63342992/3c315408-cd72-4aa1-ab64-1393ecb83ddc)
+
