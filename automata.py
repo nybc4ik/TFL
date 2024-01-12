@@ -1,7 +1,8 @@
 import random
 import re
 import time
-
+import optimizer1
+import lab2
 
 def close_skobka_blin(regex, open_skobka_number):
     counter_skobk = 0
@@ -236,7 +237,9 @@ def make_automata(regex):
 
     return result
 
-regex = input("Введите регулярку: ") #"((((((b*|c)|a*)a|b*)|b)|b*)c|c)c*"
+
+regex =  lab2.create_regex()
+#print ("регулярка1: ", regex)
 
 automata = make_automata(regex)
 #print(automata)
@@ -414,7 +417,7 @@ for k in range(10):
 
 
 
-print("слово ", final_word)
+#print("слово ", final_word)
 
 final_word += "Ъ" #добавляем символ которого ТОЧНО НЕТ в регулярке 
 
@@ -424,7 +427,7 @@ star_hight = 100 #пусть будет 100 звёздочек!!!
 def shorten_chars(match):
     return match.group(0)[:star_hight]
 final_word = re.sub(r'(.)\1+', shorten_chars, final_word)
-print("обрезанное слов: ", final_word)
+#print("обрезанное слов: ", final_word)
 
 
 #тут я сравниваю время 
@@ -433,7 +436,8 @@ def match(pattern, word):
 
 
 regular1 = regex #оригинальная регулярка
-regular2 = input("Введите оптимизированное выражение: ") #оптимизированная регулярка
+regular2 =  optimizer1.optimise(regular1) #оптимизированная регулярка
+
 
 
 #оригинальная регулярка
