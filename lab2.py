@@ -54,7 +54,7 @@ def create_regex():
     letters = 'abcdf'
     for i in range(alpabet_size):
         alphabet.append(letters[i])
-    print(alphabet)
+    #print(alphabet)
 
 
     regex = '' # регулярка
@@ -70,9 +70,10 @@ def create_regex():
         regex = random.choice(alphabet)
         if  random.choice([0, 1]) == 1:
             regex += "*"
-        print(regex)
+        #print(regex)
     else:
         regex = random_regex(max_len_regex-1)
-        print(random_regex(max_len_regex-1))
+        #print(random_regex(max_len_regex-1))
+    print(regex)
     return regex
 s = create_regex()
