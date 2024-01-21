@@ -47,47 +47,49 @@ def rewriting(terms):
     
     str2 = "And( "
     for i in constr:
-        str0 = "And("
-        str3 = ""
-        counter_right = 0 
-        counter_left = 0 
-        counter = 1
-        check1 = False
-        for j in terms:
-            if j == i:
-                check1 = True
-            if check1:
-                if j == '(':
-                    counter_left += 1
-                if j == ')':
-                    counter_right += 1
-                if  counter_left - counter_right == 1 and j== ',':
-                    counter += 1
-                if  counter_left == counter_right and counter_left != 0:
-                    counter +=1
-                    break
-        #print("проверка подсчёта ",counter)    
-                
-        
-        all_counter.append(counter)
-        arr = []
-        for k in range(counter):
-            abc = str(counter_new)
-            str1 = "a" + abc
-            arr.append(str1)
-            counter_new += 1
-            if k == counter - 1:
-                str3 = str1 + ">0 "
+        if coefficients.get(i) is None:
+            str0 = "And("
+            str3 = ""
+            counter_right = 0 
+            counter_left = 0 
+            counter = 1
+            check1 = False
+            for j in terms:
+                if j == i:
+                    check1 = True
+                if check1:
+                    if j == '(':
+                        counter_left += 1
+                    if j == ')':
+                        counter_right += 1
+                    if  counter_left - counter_right == 1 and j== ',':
+                        counter += 1
+                    if  counter_left == counter_right and counter_left != 0:
+                        counter +=1
+                        break
+            #print("проверка подсчёта ",counter)    
+            all_counter.append(counter)
+            arr = []
+            for k in range(counter):
+                abc = str(counter_new)
+                str1 = "a" + abc
+                arr.append(str1)
+                counter_new += 1
+                if k == counter - 1:
+                    str3 = str1 + ">0 "
+                else:
+                    str0 += str1 + ">1, "
+            if len(str0) > 4:
+                str0 = str0[:-2] + "), "
             else:
-                str0 += str1 + ">1, "
-        if len(str0) > 4:
-            str0 = str0[:-2] + "), "
-        else:
-            str0 = ""
-        str2 += "Or( " + str0 + str3 + "), "
+                str0 = ""
+            str2 += "Or( " + str0 + str3 + "), "
 
-        coefficients[i] = arr
-    str2 = str2[:-2] + ")"
+            coefficients[i] = arr
+    if len(str2) > 5:
+        str2 = str2[:-2] + ")"
+    else:
+        str2 = ""
 
 
     str4 = "And("
@@ -103,7 +105,8 @@ def rewriting(terms):
                 str4 += k + ">=0, "
     #print(str4[:-2]+")")
     #print(str2)
-    Result_F.add(eval(str2))
+    if str2!= "":
+        Result_F.add(eval(str2))
     Result_F.add(eval(str4[:-2]+")"))
     
 
@@ -149,7 +152,7 @@ def rewriting(terms):
                         counter2 = 0
                         #print(counter1)
                         continue
-                if i == "+" and counter1 == 0 :
+                if k == "+" and counter1 == 0 :
                     continue
                 counter1 += 1    
 
@@ -223,7 +226,6 @@ def line(term):
             counter += 1
 
     return term
-
 
 
 #Ввод данных
