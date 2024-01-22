@@ -92,13 +92,14 @@ def dstr(string):
                 i+=1
         strings.append(s1)
         l=len(strings)
-        if l==1:
-            strings[0]="("+strings[0]+")"
-            return (strings[0])
         for i in range(0,l-1):
             for j in range(i+1,l):
                 if strings[i]==strings[j]:
                     strings.pop(j)
+        l=len(strings)
+        if l==1:
+            strings[0]="("+strings[0]+")"
+            return (strings[0])
         f=0
         left=""
         while f==0:
