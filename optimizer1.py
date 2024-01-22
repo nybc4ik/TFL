@@ -112,7 +112,7 @@ def dstr(string):
                 for s in range(len(strings)):
                     if len(strings[s])>1 and strings[s][1]=="*" and f1==0:
                         f1=1
-                    elif len(strings[s])==1 or (len(strings[s])>1 and strings[s][1]!="*" and f1==0):
+                    elif (len(strings[s])==1 or (len(strings[s])>1 and strings[s][1]!="*")) and f1==0:
                         f1=2 
                     else:
                         f1=3
