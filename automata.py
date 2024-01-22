@@ -441,11 +441,16 @@ regular2 =  optimizer1.optimise(regular1) #оптимизированная ре
 print("оптимизированная регулярка: ",regular2)
 
 
+#в связи с аппаратным ограничением надо убрать лишние *
+res_orig_regex = re.sub(r'\*+', '*', regular1)
+res_non_origin_regex = re.sub(r'\*+', '*', regular2)
+
+        
 #оригинальная регулярка
 check = True
 while True:
     start_time = time.time()
-    sravnim = match(regular1, final_word)
+    sravnim = match(res_orig_regex, final_word)
     end_time = time.time()
     if end_time - start_time < 30:
         check = True
@@ -463,6 +468,6 @@ print('\n')
 
 #оптимизированная регулярка
 start_time = time.time()
-sravnim = match(regular2, final_word)
+sravnim = match(res_non_origin_regex, final_word)
 end_time = time.time()
 print("время с оптимизированной регуляркой: ", end_time - start_time, " регулярка: ", regular2)
