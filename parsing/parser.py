@@ -116,7 +116,10 @@ class LL1Parser:
                 if front.name != EPSILON:
                     propogatePosition(front, i + lastParsedPos)
                     i += 1
+                    #print(i, front.pos, s)
                     if front.name == EOS:
+                        if (front.pos - 1) < len(s):
+                            raise RuntimeError("s ∉  L")
                         break
                     current = next(charGen)
                 elif front.parent is not None and len(front.parent.children) == 1:
