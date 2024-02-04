@@ -5,10 +5,13 @@ from parsing.table import BuildTable
 
 def main():
     f = open("input.txt")
-    strat, w0, w1, info = ParseInput(f)
+    info = ParseInput(f)
     f.close()
 
-    siblingStart = strat == "sibling"
+    siblingStart = "sibling"
+    
+    w0=input("Please, write w0 word\n")
+    w1=input("Please, write w1 word\n")
 
     table = BuildTable(info)
     p = LL1Parser(table, info.Terms)

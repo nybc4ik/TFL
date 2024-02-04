@@ -26,8 +26,7 @@ def read_word(r: TextIOWrapper, name: str) -> str:
     return w
 
 
-def ParseInput(r: TextIOWrapper) -> tuple[str, str, str, Grammarinfo]:
-    strat = str(r.readline().strip())
+def ParseInput(r: TextIOWrapper) -> Grammarinfo:
     info = Grammarinfo()
 
     nonTerminalsStr = str(r.readline()).strip()
@@ -75,7 +74,5 @@ def ParseInput(r: TextIOWrapper) -> tuple[str, str, str, Grammarinfo]:
             vars = rightProductions[i].split()
             info.Productions[lhs].append(vars)
 
-    w0 = read_word(r, "w0").strip()
-    w1 = read_word(r, "w1").strip()
 
-    return strat, w0, w1, info
+    return info
