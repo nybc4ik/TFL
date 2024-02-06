@@ -1,52 +1,57 @@
 import sys
 import random
+import re
 
-def random_regex(max_len_regex):
-    global regex, alphabet, stars
-    if max_len_regex > 1:
-        if len(regex) == 0:
-            letter1 = random.choice(alphabet)
-            if random.choice([0, 1]) == 1: 
-                letter1 += "*"* random.randint(0, stars)
-            letter2 = random.choice(alphabet)
-            if random.choice([0, 1]) == 1: 
-                letter2 += "*"*random.randint(0, stars)
-            if random.choice([0, 1]) == 1: # выбор бинарной операции | или e
-                regex += ("(" + letter1 + "|" + letter2 + ")")
-                if random.choice([0, 1]) == 1: 
-                    regex += "*"*random.randint(0, stars)
-            else:
-                regex += (letter1 + letter2)
-            max_len_regex -= 1
+def random_regex(regex):
+    global alphabet, stars, max_len_regex
+    operation = ["|", ""]
+    amount_of_letters = 0
+    if regex == []:
+        if random.randint(0, 1) == 1:
+            regex.append("(")
         else:
-            letter3 = random.choice(alphabet)
-            if random.choice([0, 1]) == 1: 
-                letter3 += "*"*random.randint(0, stars)
-            if "(" in regex:
-                if random.choice([0, 1]) == 1: # выбор бинарной операции | или e
-                    index = regex.rindex("(")
-                    regex = regex[:index+1] + "(" + regex[index+1:]
-                    regex += ("|" + letter3 + ")")
-                    if random.choice([0, 1]) == 1: 
-                        regex += "*"*random.randint(0, stars)
-                else:
-                    regex += letter3
-            else:
-                regex += letter3
-            max_len_regex -= 1
-        random_regex(max_len_regex)
+            regex.append(random.choice(alphabet))    
+        # print(res)
     else:
-        letter4 = random.choice(alphabet)
-        if random.choice([0, 1]) == 1: # выбор будет ли последняя буква иметь * или нет 
-            regex += (letter4 +"*"*random.randint(0, stars))
+        amount_of_letters = regex.count("a") + regex.count("b") + regex.count("c") + regex.count("d") + regex.count("f")
+        if amount_of_letters + 2 < max_len_regex:
+            if regex[len(regex)-1] in alphabet or  (regex[len(regex)-1] == ")") or(regex[len(regex)-1] == ")" + "*"*stars):
+                if regex.count("(") > (regex.count(")") + regex.count(")" + "*"*stars)):
+                    regex.append(random.choice(operation+[")", ")"+"*"*stars, "*"*stars, "("]))
+                else:
+                    regex.append(random.choice(operation + ["*"*stars, "("]))
+            if regex[len(regex)-1] in operation or (regex[len(regex)-1] == "*"*stars) or (regex[len(regex)-1] == "("):
+                regex.append(random.choice(alphabet + ["("]))
         else:
-            regex += letter4 +"*"*random.randint(0, stars)
-    return(regex)
+            if regex[len(regex)-1] in alphabet  or  (regex[len(regex)-1] == ")"):
+                if regex.count("(") > (regex.count(")") + regex.count(")"+"*"*stars)):
+                    regex.append(random.choice([")", ")"+"*"*stars, "*"*stars, "("]))
+                else:
+                    regex.append(random.choice(["*"*stars, "("]))
+            if regex[len(regex)-1] in operation or (regex[len(regex)-1] == "(") or (regex[len(regex)-1] == "*"*stars) or (regex[len(regex)-1] == ")"+"*"*stars):
+                regex.append(random.choice(alphabet + ["("]))
+
+    if amount_of_letters == max_len_regex:
+        if regex.count("(")>(regex.count(")") + regex.count(")"+"*"*stars)):
+            regex.append(random.choice([")"*(regex.count("(") - regex.count(")") - regex.count(")"+"*"*stars)), ")"*(regex.count("(")-regex.count(")") - regex.count(")"+"*"*stars))+"*"*stars]))
+        final_regex = ""
+        for i in range(len(regex)):
+            final_regex += regex[i]
+
+        #print("проверочка 1", final_regex)
+        for i in range(len(final_regex)):
+            final_regex = final_regex.replace("()"+"*"*stars, "")
+            final_regex = final_regex.replace("()", "")
+        #print("проверочка 2", final_regex)
+        return final_regex
+    else:
+        return random_regex(regex)
 
 
+   
 
 def create_regex():
-    global regex, alphabet, stars
+    global regex, alphabet, stars, max_len_regex
     #alpabet_size = int(input("Введите размер алфавита: "))
     alpabet_size = 3
     if alpabet_size > 5:
@@ -59,15 +64,12 @@ def create_regex():
     for i in range(alpabet_size):
         alphabet.append(letters[i])
     #print(alphabet)
-
-    regex = '' # регулярка
-
     #звёздная высота
     #stars = int(input)
-    stars = 5
+    stars = 2
 
     #max_len_regex = int(input("Введите максимальное число букв в регулярке: ")) # максимальное число букв в регулярке
-    max_len_regex = 20
+    max_len_regex = 6
     if max_len_regex == 0:
         print('А как...?')
         sys.exit()
@@ -76,12 +78,22 @@ def create_regex():
     if max_len_regex == 1:
         regex = random.choice(alphabet)
         if  random.choice([0, 1]) == 1:
-            regex += "*"
+            regex += "*"*stars
         #print(regex)
     else:
-        regex = random_regex(max_len_regex-1)
+        regex = []
+        regex = random_regex(regex)
         #print(random_regex(max_len_regex-1))
     #print(regex)
+    #print(re.sub(r'(\S)\|(S)', r'\1(\|\2)', regex)
+    #regex = (re.sub(r'(\S)\|(S)', r'\1(\|\2)', regex))
+    #уборка 
+     
+    pattern = r'\(([a-zA-Z])\)'
+    matches = re.finditer(pattern, regex)
+    for match in matches:
+        if len(match.group(1)) == 1:
+            regex = regex[:match.start()] + match.group(1) + regex[match.end():]
     return regex
-s = create_regex()
+#s = create_regex()
 #print(s)
