@@ -2,56 +2,103 @@ import sys
 import random
 import re
 
-def random_regex(regex):
-    global alphabet, stars, max_len_regex
-    operation = ["|", ""]
-    amount_of_letters = 0
-    if regex == []:
-        if random.randint(0, 1) == 1:
-            regex.append("(")
+
+def generate_oreo(len): #для заполнения пустот в ()
+    global alphabet
+    if len == 2:
+        if random.randint(0,1) == 1:    
+            oreo = "(" + random.choice(alphabet) + "|" + random.choice(alphabet) + ")" 
         else:
-            regex.append(random.choice(alphabet))    
-        # print(res)
-    else:
-        amount_of_letters = regex.count("a") + regex.count("b") + regex.count("c") + regex.count("d") + regex.count("f")
-        if amount_of_letters + 2 < max_len_regex:
-            if regex[len(regex)-1] in alphabet or  (regex[len(regex)-1] == ")") or(regex[len(regex)-1] == ")" + "*"*stars):
-                if regex.count("(") > (regex.count(")") + regex.count(")" + "*"*stars)):
-                    regex.append(random.choice(operation+[")", ")"+"*"*stars, "*"*stars, "("]))
-                else:
-                    regex.append(random.choice(operation + ["*"*stars, "("]))
-            if regex[len(regex)-1] in operation or (regex[len(regex)-1] == "*"*stars) or (regex[len(regex)-1] == "("):
-                regex.append(random.choice(alphabet + ["("]))
+            oreo = "(" + random.choice(alphabet) + "|" + random.choice(alphabet) + ")"
+        #print(oreo)
+        return(oreo)
+    elif len == 3: 
+        if random.randint(0,1) == 1:
+            oreo = "(" + random.choice(alphabet) + "|" + random.choice(alphabet) + random.choice(alphabet)  + ")"
+            #print(oreo)
+            return(oreo)
         else:
-            if regex[len(regex)-1] in alphabet  or  (regex[len(regex)-1] == ")"):
-                if regex.count("(") > (regex.count(")") + regex.count(")"+"*"*stars)):
-                    regex.append(random.choice([")", ")"+"*"*stars, "*"*stars, "("]))
+            oreo = "(" + random.choice(alphabet) + random.choice(alphabet)+ "|" + random.choice(alphabet) + ")"
+            #print(oreo)
+            return(oreo)
+    elif len >=  4: #возможен вариант с двойными скобками! ((|)|(|)) 
+        if random.randint(0,1) == 1: #будут скобки
+            if len % 2 == 0:
+                left_part = generate_oreo(int(len/2))
+                right_part = generate_oreo(int(len/2))
+            else:
+                if random.randint(0,1) == 1:
+                    left_part = generate_oreo(int((len/2)+1))
+                    right_part = generate_oreo(int(len/2))
                 else:
-                    regex.append(random.choice(["*"*stars, "("]))
-            if regex[len(regex)-1] in operation or (regex[len(regex)-1] == "(") or (regex[len(regex)-1] == "*"*stars) or (regex[len(regex)-1] == ")"+"*"*stars):
-                regex.append(random.choice(alphabet + ["("]))
+                    left_part = generate_oreo(int(len/2))
+                    right_part = generate_oreo(int((len/2)+1))
+            #обработка исключений
+            if left_part == None:
+                print("ошибка слева!")
+                return("Eror_left")
+            elif right_part == None:
+                print("ошибка справа!")
+                return("Eror_right")
+            oreo = "(" + left_part + "|" + right_part + ")"
+            #print(oreo)
+            return(oreo)
+        else: #или нет
+            if len % 2 == 0:
+                left_part1 = ''.join(random.choice(alphabet) for _ in range(int(len/2)))  
+                right_part1 = ''.join(random.choice(alphabet) for _ in range(int(len/2)))   
+            else:
+                if random.randint(0,1) == 1:
+                    left_part1 = ''.join(random.choice(alphabet) for _ in range(int((len/2)+1)))  
+                    right_part1 = ''.join(random.choice(alphabet) for _ in range(int(len/2)))
+                else:
+                    left_part1 = ''.join(random.choice(alphabet) for _ in range(int(len/2)))   
+                    right_part1 = ''.join(random.choice(alphabet) for _ in range(int((len/2)+1)))  
+            oreo = "(" + left_part1 + "|" + right_part1 + ")"
+            #print(oreo)
+            return(oreo)
+    elif len == 1:
+        return(random.choice(alphabet))
+    
 
-    if amount_of_letters == max_len_regex:
-        if regex.count("(")>(regex.count(")") + regex.count(")"+"*"*stars)):
-            regex.append(random.choice([")"*(regex.count("(") - regex.count(")") - regex.count(")"+"*"*stars)), ")"*(regex.count("(")-regex.count(")") - regex.count(")"+"*"*stars))+"*"*stars]))
-        final_regex = ""
-        for i in range(len(regex)):
-            final_regex += regex[i]
-
-        #print("проверочка 1", final_regex)
-        for i in range(len(final_regex)):
-            final_regex = final_regex.replace("()"+"*"*stars, "")
-            final_regex = final_regex.replace("()", "")
-        #print("проверочка 2", final_regex)
-        return final_regex
-    else:
-        return random_regex(regex)
-
-
-   
+def random_regex(regex, max_len_regex):
+    global alphabet, stars
+    #print("полученые данные:")
+    #print("длина регулярка", max_len_regex)
+    #print("реуглярка", regex)
+    amount_of_letters = 0   
+    if max_len_regex == 1: #если длина 1, то добавляем букву ... другого выхода у нас нет 
+        if random.randint(0,1) == 1: #звёздная высота 
+            regex += random.choice(alphabet) + "*"*stars
+            #print("лови звёздочки!!", regex)
+        else:
+            regex += random.choice(alphabet)
+        amount_of_letters += 1
+        return(regex)
+    if max_len_regex >=2: #если длина больше двух, то добавляем операцию (или не добавляем)
+        if random.randint(0,1) == 1:
+            abc = random.randint(2,max_len_regex)
+            max_len_regex -= abc
+            amount_of_letters += abc
+            regex += generate_oreo(abc)
+            #print("проверка 1", regex, abc)
+        else:
+            abc = random.randint(2,max_len_regex)
+            max_len_regex -= abc
+            amount_of_letters += abc
+            bukovi = ''.join(random.choice(alphabet) for _ in range(abc)) 
+            regex += bukovi
+            #print(regex, abc)
+    #print("длина", max_len_regex)
+    if max_len_regex == 0: #не осталось свободных букв? выходим
+        #print("проверка перед выходом", regex)
+        return(regex)
+    else: #остались свободные буквы
+        #print("проверка", regex, max_len_regex)
+        return(random_regex(regex, max_len_regex))
 
 def create_regex():
-    global regex, alphabet, stars, max_len_regex
+    global regex, alphabet, stars
     #alpabet_size = int(input("Введите размер алфавита: "))
     alpabet_size = 3
     if alpabet_size > 5:
@@ -69,7 +116,7 @@ def create_regex():
     stars = 2
 
     #max_len_regex = int(input("Введите максимальное число букв в регулярке: ")) # максимальное число букв в регулярке
-    max_len_regex = 6
+    max_len_regex = 10
     if max_len_regex == 0:
         print('А как...?')
         sys.exit()
@@ -79,21 +126,17 @@ def create_regex():
         regex = random.choice(alphabet)
         if  random.choice([0, 1]) == 1:
             regex += "*"*stars
-        #print(regex)
     else:
-        regex = []
-        regex = random_regex(regex)
-        #print(random_regex(max_len_regex-1))
-    #print(regex)
-    #print(re.sub(r'(\S)\|(S)', r'\1(\|\2)', regex)
-    #regex = (re.sub(r'(\S)\|(S)', r'\1(\|\2)', regex))
-    #уборка 
-     
-    pattern = r'\(([a-zA-Z])\)'
-    matches = re.finditer(pattern, regex)
-    for match in matches:
-        if len(match.group(1)) == 1:
-            regex = regex[:match.start()] + match.group(1) + regex[match.end():]
+        regex = ''
+        regex = random_regex(regex, max_len_regex)
     return regex
-#s = create_regex()
-#print(s)
+
+
+s = create_regex()
+#print("финалочка",s)
+
+"""
+#Тестирование
+for i in range(10): 
+    print("регулярка номер: ", i ," ", create_regex())
+"""
