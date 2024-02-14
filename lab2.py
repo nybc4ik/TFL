@@ -158,17 +158,14 @@ def stars_ading(regex, stars):
         if regex.count("|") == 1: #тут только одна |
             num1 = random.randint(0,stars)
             left_part = "*"*num1 +"|"
-            if num1 < stars:
-                num2 = stars
-            else:
-                num2 = random.randint(0,stars)
+            num2 = random.randint(0,stars)
             right_part = "*"*num2 + ")"
             regex = regex.replace("|", left_part)
             regex = regex.replace(")", right_part)
             if num1 > num2:
                 regex +=  "*"*(stars - num1)
             else:
-                regex +=  "*"*(stars - num2) 
+                regex +=  "*"*(stars - num2)                   
         else: #отправляем на поиск альтернатив и каждой выделаем n звёздочек с: 
             #print("проверка 0", regex)
             regex_left, regex_right = alternatif_finder(regex)
@@ -216,7 +213,7 @@ def create_regex():
         print('А как...?')
         sys.exit()
 
-    # если в регулярке всего одна буква то ситуация простая
+    #если в регулярке всего одна буква то ситуация простая
     if max_len_regex == 1:
         regex = random.choice(alphabet)
         if  random.choice([0, 1]) == 1:
@@ -228,7 +225,7 @@ def create_regex():
     if random.randint(0,1) == 1: 
         regex = add_stars_brac(regex, stars)
         regex = ''.join(map(str,regex))
-    # неудачные случаи (когда рандом не на нашей стороне) или если в регулярке нет звёздной высоты (нужно добавить принудительно!)
+    #неудачные случаи (когда рандом не на нашей стороне) или если в регулярке нет звёздной высоты (нужно добавить принудительно!)
     if regex.count("*") == 0:
         regex = add_stars_brac(regex, stars)
         regex = ''.join(map(str,regex))
