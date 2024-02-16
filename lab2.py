@@ -230,7 +230,7 @@ def create_regex():
         regex = add_stars_brac(regex, stars)
         regex = ''.join(map(str,regex))
     if regex.count("(") == 0 and regex.count("*") == 0:
-        g = random.randint(0, len(regex))
+        g = random.randint(1, len(regex))
         regex = regex[:g] + "*"*stars + regex[g:]
     return regex
 
